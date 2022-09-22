@@ -29,7 +29,27 @@ $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"] . $_SERVER['RE
 </head>
 <body>
 
-    içerik
+    <div id="app">
+
+
+
+        <div class="left-bar">
+
+            left
+
+        </div>
+
+
+
+        <div class="right-bar">
+
+            right
+
+        </div>
+
+
+
+    </div>
 
 </body>
 </html>
