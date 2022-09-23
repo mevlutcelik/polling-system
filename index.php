@@ -58,6 +58,7 @@ $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"] . $_SERVER['RE
     
     
     <link rel="stylesheet" href="<?= $domain ?>/css/style.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 
 
@@ -76,7 +77,21 @@ $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"] . $_SERVER['RE
 
         <div class="left-bar">
 
-            left
+            <div class="logo">
+            
+                <div style="display: flex;flex-direction:column;">
+                    <span style="font-size:28px;font-family: 'Zilla Slab', serif;">Muş Alparslan Üniversitesi</span>
+                    <span style="font-size:18px;font-family: 'Zilla Slab', serif;">Uygulamalı Bilimler Fakültesi</span>
+                    <span style="font-size:14px;font-family: 'Zilla Slab', serif;">Bilişim Sistemleri ve Teknolojileri</span>
+                </div>
+            
+            </div>
+
+
+
+            <div class="left-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis libero dolor aut perspiciatis ea dolores cumque alias, enim tempore fuga voluptate vel est neque iure necessitatibus a mollitia sint molestiae?</div>
+
+
 
         </div>
 
