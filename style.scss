@@ -11,6 +11,10 @@ $left-weight: 36vw;
 }
 
 
+svg{
+    fill: currentColor;
+}
+
 
 #app{
     display: flex;
@@ -24,8 +28,13 @@ $left-weight: 36vw;
 
 
 .left-bar{
-    background-color: #1135ff;
+    background-color: #fff;
     width: $left-weight;
+    padding: 4rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 
@@ -33,4 +42,23 @@ $left-weight: 36vw;
 .right-bar{
     background-color: #f8f9ff;
     width: calc(100vw - #{$left-weight});
+}
+
+
+.logo{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img{
+        width: 40%;
+    }
+
+}
+
+
+
+.left-text{
+    padding: 0 4rem;
 }
