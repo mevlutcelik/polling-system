@@ -84,7 +84,7 @@ $apiUrl = "https://api.mevlutcelik.com/get/?token=$token";
         }
 
 
-        .qr-box{
+        .qr-box, .footer{
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,6 +111,9 @@ $apiUrl = "https://api.mevlutcelik.com/get/?token=$token";
             <h2>Uygulamalı Bilimler Fakültesi</h2>
             <h3>Bilişim Sistemleri ve Teknolojileri</h3>
 
+            <br/><br/><h1>Yoklama Sistemi</h1>
+            <h4>Yoklamada var olduğunuzun bildirilmesi için<br/>lütfen aşağıda yer alan QR Code'u okutunuz.</h4>
+
         </div>
 
 
@@ -133,6 +136,13 @@ $apiUrl = "https://api.mevlutcelik.com/get/?token=$token";
 
         <div class="qr-box">
             <img width="350" src="<?= $domain . "/" . $imageName ?>" alt="QR Code">
+        </div>
+
+
+        <div class="footer">
+            
+            <small>&copy; <?= date("Y"); ?> Mevlüt Çelik - Tüm Hakları Saklıdır.</small>
+        
         </div>
 
 
