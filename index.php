@@ -1,5 +1,8 @@
 <?php
 
+
+require __DIR__ . "/delete_barcode.php";
+
 $domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"];
 $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'];
 
