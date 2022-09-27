@@ -216,7 +216,9 @@ try{
                 token: `<?= $token ?>`
             },
             success: function(result) {
-                console.log(result);
+                if(result == 1){
+                    window.location.reload()
+                }
             }
         });
 
