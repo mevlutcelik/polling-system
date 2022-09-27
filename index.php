@@ -229,3 +229,5 @@ try{
 
 
 </html>
+
+<?php $db = null; ?>
