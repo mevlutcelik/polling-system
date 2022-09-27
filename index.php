@@ -73,30 +73,31 @@ try{
 <head>
 
     <meta charset="UTF-8" />
-    
 
-    
+
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta http-equiv="Content-Language" content="tr" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    
-    
-    
+
+
+
     <meta name="msapplication-tap-highlight" content="no" />
 
 
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    
-    
+
+
+
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow" />
     <meta name="revisit-after" content="7 Days" />
-    
-    
-    
-    <title>Yoklama Sistemi - Muş Alparslan Üniversitesi | Uygulamalı Bilimler Fakültesi | Bilişim Sistemleri ve Teknolojileri</title>
+
+
+
+    <title>Yoklama Sistemi - Muş Alparslan Üniversitesi | Uygulamalı Bilimler Fakültesi | Bilişim Sistemleri ve
+        Teknolojileri</title>
 
 
 
@@ -120,33 +121,31 @@ try{
 
 
     <style>
-
-        #app{
-            padding: 4rem 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-
-        .title{
-
-            text-align: center;
-
-        }
+    #app {
+        padding: 4rem 0;
+        display: flex;
+        flex-direction: column;
+    }
 
 
-        .title *{
-            margin: 0;
-        }
+    .title {
+
+        text-align: center;
+
+    }
 
 
-        .qr-box, .footer{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .title * {
+        margin: 0;
+    }
 
-        
+
+    .qr-box,
+    .footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     </style>
 
 
@@ -167,8 +166,9 @@ try{
             <h2>Uygulamalı Bilimler Fakültesi</h2>
             <h3>Bilişim Sistemleri ve Teknolojileri</h3>
 
-            <br/><br/><h1>Yoklama Sistemi</h1>
-            <h4>Yoklamada var olduğunuzun bildirilmesi için<br/>lütfen aşağıda yer alan QR Code'u okutunuz.</h4>
+            <br /><br />
+            <h1>Yoklama Sistemi</h1>
+            <h4>Yoklamada var olduğunuzun bildirilmesi için<br />lütfen aşağıda yer alan QR Code'u okutunuz.</h4>
 
         </div>
 
@@ -196,13 +196,32 @@ try{
 
 
         <div class="footer">
-            
+
             <small>&copy; <?= date("Y"); ?> Mevlüt Çelik - Tüm Hakları Saklıdır.</small>
-        
+
         </div>
 
 
     </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script>
+    setInterval(function() {
+
+        $.ajax({
+            url: "<?= $domain ?>/qr_checked.php",
+            method: "post",
+            data: {
+                token: `<?= $token ?>`
+            },
+            success: function(result) {
+                console.log(result);
+            }
+        });
+
+    }, 1000);
+    </script>
 
 
 </body>
