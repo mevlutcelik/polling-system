@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php
 
 foreach (glob("*") as $barcode) {
@@ -202,6 +203,7 @@ if ($getToken === null) {
         } else {
 
             $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] . @$_SERVER["UNIQUE_ID"] . @$_SERVER["PATH"]);
+            echo $fingerprint;
 
             if (file_exists(__DIR__ . "/fingerprints/" . $fingerprint . ".json")) {
 
