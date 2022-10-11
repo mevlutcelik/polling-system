@@ -166,9 +166,7 @@ if ($getToken === null) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: #01200166;
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.4);
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -183,7 +181,7 @@ if ($getToken === null) {
         }
 
         .modal-content {
-            background: #dfffe0;
+            background: #fff;
             color: #065809;
             padding: 1.5rem;
             border-radius: 0.5rem;
@@ -202,7 +200,7 @@ if ($getToken === null) {
             echo "Geçersiz Token!";
         } else {
 
-            $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] .@$_SERVER["PATH"]);
+            $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] . @$_SERVER["PATH"]);
             // echo $fingerprint;
             // print_r($_SERVER);
 
@@ -211,22 +209,31 @@ if ($getToken === null) {
                 $dosya = fopen("fingerprints/" . $fingerprint . ".json", "r");
                 $json = json_decode(fread($dosya, filesize("fingerprints/" . $fingerprint . ".json")));
 
-                if(!file_exists(__DIR__ . "/logs")){
+                if (!file_exists(__DIR__ . "/logs")) {
                     mkdir("logs", 0777, true);
                 }
 
                 if (file_exists(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt")) {
 
                     $file = fopen("logs/" . $d . "_" . $m . "_" . $Y . ".txt", "a");
-                    fwrite($file, "\n" . $json->name . " " . $json->surname);
+                    $x = explode("\n", fread($dosya, filesize("logs/" . $d . "_" . $m . "_" . $Y . ".txt")));
+                    if (in_array($json->name . " " . $json->surname, $x)) {
+    ?>
+                        <div class="modal">
+                            <div class="modal-content">💥 Zaten giriş yapmışsın, <?= $json->name ?></div>
+                        </div>
+                <?php
+                    } else {
+                        fwrite($file, "\n" . $json->name . " " . $json->surname);
+                    }
                     fclose($file);
                 } else {
-            
-            
+
+
                     file_put_contents(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt", $json->name . " " . $json->surname);
                 }
 
-    ?>
+                ?>
                 <div class="modal">
                     <div class="modal-content">Hoşgeldin <?= $json->name ?> 🎉</div>
                 </div>
@@ -342,21 +349,30 @@ if ($getToken === null) {
                     }
                     $save = file_put_contents(__DIR__ . "/fingerprints/" . $fingerprint . ".json", json_encode($userDetail));
                     if ($save) {
-                        if(!file_exists(__DIR__ . "/logs")){
+                        if (!file_exists(__DIR__ . "/logs")) {
                             mkdir("logs", 0777, true);
                         }
-        
+
                         if (file_exists(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt")) {
-        
+
                             $file = fopen("logs/" . $d . "_" . $m . "_" . $Y . ".txt", "a");
-                            fwrite($file, "\n" . $name . " " . $surname);
+                            $x = explode("\n", fread($file, filesize("logs/" . $d . "_" . $m . "_" . $Y . ".txt")));
+                            if (in_array($name . " " . $surname, $x)) {
+                ?>
+                                <div class="modal">
+                                    <div class="modal-content">💥 Zaten giriş yapmışsın, <?= ucfirst($name); ?> 🎉</div>
+                                </div>
+                        <?php
+                            } else {
+                                fwrite($file, "\n" . $name . " " . $surname);
+                            }
                             fclose($file);
                         } else {
-                    
-                    
+
+
                             file_put_contents(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt", $name . " " . $surname);
                         }
-                ?>
+                        ?>
                         <div class="modal">
                             <div class="modal-content">Hoşgeldin <?= ucfirst($name); ?> 🎉</div>
                         </div>
