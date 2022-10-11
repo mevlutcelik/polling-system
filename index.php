@@ -1,160 +1,117 @@
 <?php
 
+foreach (glob("*") as $barcode) {
 
-require __DIR__ . "/delete_barcode.php";
+    if (strstr($barcode, "qr_code_")) {
+
+        unlink($barcode);
+    }
+}
+
+
+
+
+$getToken = @$_GET["token"];
+$d = date('d');
+$m = date('m');
+$Y = date('Y');
+date_default_timezone_set("Europe/Istanbul");
+
 
 $domain = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"];
 $url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER["HTTP_HOST"] . $_SERVER['REQUEST_URI'];
 
 
-$token = bin2hex(random_bytes(23));
-$apiUrl = "https://api.mevlutcelik.com/get/?token=$token";
+if ($getToken === null) {
+    $token = bin2hex(random_bytes(23));
+    $apiUrl = "https://qr.mevlutcelik.com/?token=$token";
 
 
-
-// Hash lenmiş şifreleme algoritması
-function encrypt_decrypt($action, $string){
-
-    $output = false;
-    $encrypt_method = 'AES-256-CBC'; //sifreleme yontemi
-    $secret_key = '@mx__'; //sifreleme anahtari
-    $secret_iv = '__mx__'; //gerekli sifreleme baslama vektoru
-    $key = hash('sha256', $secret_key); //anahtar hast fonksiyonu ile sha256 algoritmasi ile sifreleniyor
-    $iv = substr(hash('sha256', $secret_iv), 0, 16);
-
-
-
-    if ($action == 'encrypt') {
-
-        $output = urlencode(serialize(base64_encode(gzcompress(openssl_encrypt($string, $encrypt_method, $key, 0, $iv)))));
-
-    } else if ($action == 'decrypt') {
-        
-        $output = openssl_decrypt(gzuncompress(base64_decode(unserialize(urldecode($string)))), $encrypt_method, $key, 0, $iv);
-
+    if (!file_exists(__DIR__ . "/tokens")) {
+        mkdir("tokens", 0777, true);
     }
 
 
-    return $output;
-}
+    if (file_exists(__DIR__ . "/tokens/" . $d . "_" . $m . "_" . $Y . ".txt")) {
+
+        $file = fopen("tokens/" . $d . "_" . $m . "_" . $Y . ".txt", "a");
+        fwrite($file, "\n" . $token);
+        fclose($file);
+    } else {
+
+
+        file_put_contents(__DIR__ . "/tokens/" . $d . "_" . $m . "_" . $Y . ".txt", $token);
+    }
 
 
 
+    require __DIR__ . "/barcode_qr.php";
 
 
-$x = encrypt_decrypt('decrypt', "s%3A44%3A%22eJyrCkwK8Axxysgyz0kvtkgqzAwICHIst7UFAGnuCEQ%3D%22%3B");
-$y = encrypt_decrypt('decrypt', "s%3A44%3A%22eJzLCC8N90vJsChzCyoPzk0vK8sz0vZOt7UFAG3zCG0%3D%22%3B"); 
-$z = encrypt_decrypt('decrypt', "s%3A44%3A%22eJwLSzK11DfxNvTIqQjPK9bPMzMPS3ZxtLUFAFmKByw%3D%22%3B"); 
-$a = "5Ew42e6g*"; 
+    $qrCode = new BarcodeQR();
+    $qrCode->url($apiUrl);
 
+    $randName = md5(rand(1000000, 9999999));
 
-
-try{
-
-    $db = new PDO("mysql:host=$x;dbname=$y;charset=utf8mb4", $z, $a);
-
-    $query = $db->prepare("INSERT INTO tokens SET token = ?");
-    $result = $query->execute([$token]);
-
-
-}catch(PDOException $e){
-
-    print '<script>console.log(`' . trim($e->getMessage()) . '`)</>';
-
-}
-
-
+    $imageName = "qr_code_" . $randName . ".png";
+    $qrCode->draw(350, $imageName);
 ?>
-<!DOCTYPE html>
-<html lang="tr-TR">
-
-
-
-<head>
-
-    <meta charset="UTF-8" />
-
-
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta http-equiv="Content-Language" content="tr" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-
-
-    <meta name="msapplication-tap-highlight" content="no" />
-
-
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-
-
-    <meta name="robots" content="index, follow" />
-    <meta name="googlebot" content="index, follow" />
-    <meta name="revisit-after" content="7 Days" />
-
-
-
-    <title>Yoklama Sistemi - Muş Alparslan Üniversitesi | Uygulamalı Bilimler Fakültesi | Bilişim Sistemleri ve
-        Teknolojileri</title>
-
-
-
-    <meta name="description" content="Page Description" />
-    <meta name="keywords" content="Page Description" />
-
-
-
-    <meta name="theme-color" content="#FFFFFF" />
-    <meta name="msapplication-TileColor" content="#FFFFFF" />
-
-
-
-    <!-- <meta name="msapplication-TileImage" content="localhost/icon.png" />
-    <link rel="icon" type="png/image" href="localhost/icon.png" sizes="32x32" /> -->
-
-
-
-    <link rel="canonical" href="<?= $url ?>" />
 
 
 
     <style>
-    #app {
-        padding: 4rem 0;
-        display: flex;
-        flex-direction: column;
-    }
+        #app {
+            padding: 4rem 0;
+            display: flex;
+            flex-direction: column;
+        }
 
 
-    .title {
+        .title {
 
-        text-align: center;
+            text-align: center;
 
-    }
-
-
-    .title * {
-        margin: 0;
-    }
+        }
 
 
-    .qr-box,
-    .footer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+        .title * {
+            margin: 0;
+        }
+
+
+        .qr-box,
+        .footer,
+        .whats-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background: #1a73e8;
+            border: none;
+            outline: none;
+            height: 3rem;
+            width: fit-content;
+            padding: 0 1.5rem;
+            margin: 1rem 0 -1rem;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+        }
     </style>
 
 
-
-</head>
-
-
-
-<body>
 
 
     <div id="app">
@@ -172,23 +129,9 @@ try{
 
         </div>
 
-
-        <?php
-
-        require __DIR__ . "/barcode_qr.php";
-
-
-        $qrCode = new BarcodeQR();
-        $qrCode->url($apiUrl);
-
-        $randName = md5(rand(1000000, 9999999));
-
-        $imageName = "qr_code_$randName.png";
-
-        $qrCode->draw(350, $imageName);
-
-        ?>
-
+        <div class="whats-button">
+            <a class="button" href="<?= $domain ?>/whats_user.php" target="_blank">Kimler burada?</a>
+        </div>
 
         <div class="qr-box">
             <img width="350" src="<?= $domain . "/" . $imageName ?>" alt="QR Code">
@@ -197,7 +140,9 @@ try{
 
         <div class="footer">
 
-            <small>&copy; <?= date("Y"); ?> Mevlüt Çelik - Tüm Hakları Saklıdır.</small>
+            <small>&copy;
+                <?= date("Y"); ?> Mevlüt Çelik - Tüm Hakları Saklıdır.
+            </small>
 
         </div>
 
@@ -205,31 +150,239 @@ try{
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
-    <script>
-    setInterval(function() {
 
-        $.ajax({
-            url: "<?= $domain ?>/qr_checked.php",
-            method: "post",
-            data: {
-                token: `<?= $token ?>`
-            },
-            success: function(result) {
-                if(result == 1){
-                    window.location.reload()
+
+
+<?php
+
+} else {
+
+?>
+    <style>
+        .modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #01200166;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            z-index: 3;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .modal-content {
+            background: #dfffe0;
+            color: #065809;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 16px;
+            font-weight: 500;
+        }
+    </style>
+    <?php
+
+
+    if (file_exists(__DIR__ . "/tokens/" . $d . "_" . $m . "_" . $Y . ".txt")) {
+        $dosya = fopen("tokens/" . $d . "_" . $m . "_" . $Y . ".txt", "r");
+        $x = explode("\n", fread($dosya, filesize("tokens/" . $d . "_" . $m . "_" . $Y . ".txt")));
+
+        if (!in_array($getToken, $x)) {
+            echo "Geçersiz Token!";
+        } else {
+
+            $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] . @$_SERVER["UNIQUE_ID"] . @$_SERVER["PATH"]);
+
+            if (file_exists(__DIR__ . "/fingerprints/" . $fingerprint . ".json")) {
+
+                $dosya = fopen("fingerprints/" . $fingerprint . ".json", "r");
+                $json = json_decode(fread($dosya, filesize("fingerprints/" . $fingerprint . ".json")));
+
+                if(!file_exists(__DIR__ . "/logs")){
+                    mkdir("logs", 0777, true);
                 }
+
+                if (file_exists(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt")) {
+
+                    $file = fopen("logs/" . $d . "_" . $m . "_" . $Y . ".txt", "a");
+                    fwrite($file, "\n" . $json->name . " " . $json->surname);
+                    fclose($file);
+                } else {
+            
+            
+                    file_put_contents(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt", $json->name . " " . $json->surname);
+                }
+
+    ?>
+                <div class="modal">
+                    <div class="modal-content">Hoşgeldin <?= $json->name ?> 🎉</div>
+                </div>
+            <?php
+            } else {
+
+
+
+
+            ?>
+
+
+                <style>
+                    * {
+                        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    }
+
+                    body {
+                        margin-bottom: 4rem;
+                    }
+
+                    h1,
+                    h2,
+                    h3,
+                    h4,
+                    p {
+                        margin: 0;
+                        line-height: 1.25;
+                        text-align: center;
+                    }
+
+                    h1 {
+                        margin-top: 4rem;
+                    }
+
+                    form {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        width: 30rem;
+                        max-width: 90%;
+                        margin: 4rem auto;
+                    }
+
+                    input {
+                        background: #fff;
+                        height: 3rem;
+                        border-radius: 0.5rem;
+                        margin-bottom: 2rem;
+                        border: 1px solid rgba(0, 0, 0, 0.15);
+                        outline: none;
+                        box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        padding: 0 1rem;
+                        width: 100%;
+                    }
+
+                    button {
+                        background: #1a73e8;
+                        border: none;
+                        outline: none;
+                        height: 3rem;
+                        width: fit-content;
+                        padding: 0 1.5rem;
+                        border-radius: 0.5rem;
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: #fff;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+                    }
+
+                    button:disabled {
+                        opacity: 0.45;
+                        pointer-events: none;
+                    }
+                </style>
+
+                <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.7/jquery.inputmask.min.js"></script>
+
+                <h1>Muş Alparslan Üniversitesi</h1>
+                <h2>Uygulamalı Bilimler Fakültesi</h2>
+                <h3>Bilişim Sistemleri ve Teknolojileri</h3>
+
+                <br><br>
+                <h4>Yoklama Sistemine Öğrenci Kayıt İşlemi</h4>
+                <p>Bu ekranı ilk defa kayıt yaptırdığınız zaman göreceksiniz. Daha sonraki girişlerinizde bu ekranı görmeyeceksiniz.
+                </p>
+                <?php
+                if (isset($_POST["qr_save"])) {
+
+                    $student_id = @$_POST["student_id"];
+                    $tc_no = @$_POST["tc_no"];
+                    $name = @$_POST["name"];
+                    $surname = @$_POST["surname"];
+                    $phone = @$_POST["phone"];
+                    $email = @$_POST["email"];
+
+                    $userDetail = [
+                        "student_id" => $student_id,
+                        "tc_no" => $tc_no,
+                        "name" => $name,
+                        "surname" => $surname,
+                        "phone" => $phone,
+                        "email" => $email,
+                    ];
+
+                    if (!file_exists(__DIR__ . "/fingerprints")) {
+                        mkdir("fingerprints", 0777, true);
+                    }
+                    $save = file_put_contents(__DIR__ . "/fingerprints/" . $fingerprint . ".json", json_encode($userDetail));
+                    if ($save) {
+                        if(!file_exists(__DIR__ . "/logs")){
+                            mkdir("logs", 0777, true);
+                        }
+        
+                        if (file_exists(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt")) {
+        
+                            $file = fopen("logs/" . $d . "_" . $m . "_" . $Y . ".txt", "a");
+                            fwrite($file, "\n" . $name . " " . $surname);
+                            fclose($file);
+                        } else {
+                    
+                    
+                            file_put_contents(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt", $name . " " . $surname);
+                        }
+                ?>
+                        <div class="modal">
+                            <div class="modal-content">Hoşgeldin <?= ucfirst($name); ?> 🎉</div>
+                        </div>
+                <?php
+                    }
+                }
+                ?>
+                <form id="student_login" action="<?= $url ?>" method="POST" autocomplete="off">
+                    <input type="text" inputmode="numeric" name="student_id" id="student_id" placeholder="Öğrenci No" />
+                    <input type="text" inputmode="numeric" name="tc_no" id="tc_no" placeholder="TC Kimlik No" />
+                    <input type="text" name="name" id="name" placeholder="Ad" />
+                    <input type="text" name="surname" id="surname" placeholder="Soyad" />
+                    <input type="tel" inputmode="tel" name="phone" id="phone" placeholder="Telefon" />
+                    <input type="email" name="email" id="email" placeholder="E-Posta adresi" />
+                    <button name="qr_save" type="submit">Kaydet</button>
+                </form>
+                <script>
+                    $(document).ready(function() {
+                        $('#student_id').inputmask("999999999");
+                        $('#tc_no').inputmask("99999999999");
+                        $('#phone').inputmask("0 (999) 999 99 99");
+                    });
+                </script>
+
+
+<?php
             }
-        });
+        }
 
-    }, 500);
-    </script>
-
-
-</body>
-
-
-
-</html>
-
-<?php $db = null; ?>
+        fclose($dosya);
+    }
+}
