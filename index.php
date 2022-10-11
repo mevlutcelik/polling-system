@@ -166,9 +166,7 @@ if ($getToken === null) {
             left: 0;
             width: 100%;
             height: 100%;
-            background: #01200166;
-            -webkit-backdrop-filter: blur(4px);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.4);
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -183,8 +181,8 @@ if ($getToken === null) {
         }
 
         .modal-content {
-            background: #dfffe0;
-            color: #065809;
+            background: #fff;
+            color: #000;
             padding: 1.5rem;
             border-radius: 0.5rem;
             font-size: 16px;
