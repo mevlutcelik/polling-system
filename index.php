@@ -203,8 +203,8 @@ if ($getToken === null) {
         } else {
 
             $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] .@$_SERVER["PATH"]);
-            echo $fingerprint;
-            print_r($_SERVER);
+            // echo $fingerprint;
+            // print_r($_SERVER);
 
             if (file_exists(__DIR__ . "/fingerprints/" . $fingerprint . ".json")) {
 
