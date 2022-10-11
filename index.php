@@ -202,7 +202,7 @@ if ($getToken === null) {
             echo "Geçersiz Token!";
         } else {
 
-            $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] . @$_SERVER["UNIQUE_ID"] . @$_SERVER["PATH"]);
+            $fingerprint = md5(@$_SERVER["HTTP_USER_AGENT"] .@$_SERVER["PATH"]);
             echo $fingerprint;
             print_r($_SERVER);
 
