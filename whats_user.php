@@ -13,9 +13,9 @@ if(!file_exists(__DIR__ . "/logs/" . $d . "_" . $m . "_" . $Y . ".txt")){
 }
 $dosya = fopen("logs/" . $d . "_" . $m . "_" . $Y . ".txt", "r");
 $x = explode("\n", fread($dosya, filesize("logs/" . $d . "_" . $m . "_" . $Y . ".txt")));
-$y = array_unique($x, "SORT_STRING");
+print_r(array_unique($x));
 echo "<ul>";
-foreach($y as $key => $value){
+foreach($x as $key => $value){
     echo "<li>". $value ."</li>";
 }
 echo "</ul>";
